@@ -1,0 +1,57 @@
+name: Full Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '8'
+
+      - name: Update and Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl gnupg2 openjdk-8-jdk wget
+
+      - name: Install Metasploit
+        run: |
+          curl https://raw.githubusercontent.com/rapid7/metasploit-framework/master/scripts/msfupdate.sh | sudo bash
+
+      - name: Install Ruby and Bundler
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+
+      - name: Install gem bundler
+        run: |
+          gem install bundler
+
+      - name: Install dependencies
+        run: |
+          bundle install
+
+      - name: Configure database.yml
+        run: |
+          cp config/database.yml.example config/database.yml
+
+      - name: Create databases
+        run: |
+          bundle exec rake db:create db:migrate
+
+      - name: Run tests
+        run: |
+          bundle exec rspec
