@@ -16,11 +16,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y gnupg2
-        curl https://apt.metasploit.com/metasploit-framework.gpg.key | sudo apt-key add -
-        sudo sh -c 'echo "deb http://apt.metasploit.com/ focal main" > /etc/apt/sources.list.d/metasploit-framework.list'
-        sudo apt-get update
-        sudo apt-get install -y metasploit-framework openjdk-8-jdk
+        sudo apt-get install -y curl gnupg2 openjdk-8-jdk wget
+        curl https://raw.githubusercontent.com/rapid7/metasploit-framework/master/scripts/msfupdate.sh | sudo bash
 
     - name: Create directories
       run: mkdir -p apk-infected
